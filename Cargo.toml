@@ -1,0 +1,16 @@
+[package]
+name = "pgm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.75"
+clap = {version = "4.4.11", features = ["derive"] }
+config = "0.13.4"
+home = "0.5.5"
+postgres = "0.19.7"
+postgres-types = { version = "0.2.6", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
+serde_yaml = "0.9.27"
