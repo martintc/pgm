@@ -1,8 +1,9 @@
 use postgres_types::{ FromSql };
 
-#[derive(Debug, FromSql)]
+#[derive(Debug, Default, FromSql)]
 #[postgres(name = "replication_state")]
 pub enum ReplicationState {
+    #[default]
     #[postgres(name = "unknown")]
     Unknown,
 
