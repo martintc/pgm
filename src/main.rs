@@ -3,6 +3,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use config::write_config;
 use config::Configuration;
+use postgres_client::types::replication_state::ReplicationState;
 
 use crate::models::monitor::Monitor;
 
@@ -53,7 +54,13 @@ enum Commands {
         formation: Option<String>
     },
 
+    // Show all nodes across formations that are reported as primary 
     ShowPrimaries {
+        #[arg(long)]
+        host: String
+    },
+
+    ShowSecondaries {
         #[arg(long)]
         host: String
     }
@@ -86,14 +93,14 @@ fn handle_show_state(config: Configuration, host: &str, formation: Option<String
     }
 }
 
-fn handle_show_primaries(config: Configuration, host: &str) -> Result<(), Error> {
+fn handle_show_primaries_or_secondaries(config: Configuration, host: &str, replication_state: ReplicationState) -> Result<(), Error> {
     let monitor = config
         .monitors
         .iter()
         .find(|m| m.host == Some(host.to_string()));
 
     if let Some(monitor) = monitor {
-        postgres_client::client::show_primaries(monitor.clone())?;
+        postgres_client::client::show_primaries_or_secondaries(monitor.clone(), replication_state)?;
         return Ok(());
     } else {
         Err(Error::msg("Host not found"))
@@ -135,7 +142,10 @@ fn main() -> Result<(), Error> {
             handle_show_state(config, host.as_str(), formation)?;
         },
         Commands::ShowPrimaries { host } => {
-            handle_show_primaries(config, host.as_str())?;
+            handle_show_primaries_or_secondaries(config, host.as_str(), ReplicationState::Primary)?;
+        },
+        Commands::ShowSecondaries { host } => {
+            handle_show_primaries_or_secondaries(config, host.as_str(), ReplicationState::Secondary)?;
         }
     }
 

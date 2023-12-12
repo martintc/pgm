@@ -1,3 +1,2 @@
 pub mod client;
-
-mod types;
+pub mod types;

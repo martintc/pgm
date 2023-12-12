@@ -52,7 +52,7 @@ pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Err
     Ok(())
 }
 
-pub fn show_primaries(monitor: Monitor) -> Result<(), Error> {
+pub fn show_primaries_or_secondaries(monitor: Monitor, desired_state: ReplicationState) -> Result<(), Error> {
     let connection_string = utility::connection_string::create_connection_string(monitor);
     let mut client = Client::connect(connection_string.as_str(), postgres::NoTls)?;
 
@@ -88,7 +88,7 @@ pub fn show_primaries(monitor: Monitor) -> Result<(), Error> {
         nodes.push(node);
     }
 
-    for primary in nodes.iter().filter(|node| node.reportedstate == ReplicationState::Primary) {
+    for primary in nodes.iter().filter(|node| node.reportedstate == desired_state) {
         println!("{}: {}", primary.nodename, primary.nodehost);
     }
 
