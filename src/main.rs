@@ -68,15 +68,14 @@ fn handle_list(config: Configuration) -> Result<(), Error> {
 }
 
 fn handle_show_state(config: Configuration, host: &str) -> Result<(), Error> {
-    let mut m: Monitor = Monitor { host: None, port: None, user: None, password: None, database_name: None };
-    for monitor in config.monitors.into_iter().as_mut_slice() {
-        let monitor_host = monitor.host.clone().unwrap();
-        if monitor_host == host {
-            m = monitor.clone();
-        }
+    let monitor = config.monitors.iter().find(|m| m.host == Some(host.to_string()));
+
+    if let Some(monitor) = monitor {
+        postgres_client::client::show_state(monitor.clone())?;
+        return Ok(());
+    } else {
+        Err(Error::msg("Host not found"))
     }
-    postgres_client::client::show_state(m)?;
-    Ok(())
 }
 
 fn main() -> Result<(), Error> {
