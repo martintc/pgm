@@ -1,10 +1,8 @@
 use postgres::Client;
 use anyhow::{ Error, Result };
-use postgres_types::FromSql;
 
 use crate::{models::monitor::Monitor, utility};
 
-use crate::postgres_client::types::replication_state::ReplicationState;
 use crate::postgres_client::types::node::Node;
 
 pub fn show_state(monitor: Monitor) -> Result<(), Error> {
@@ -13,7 +11,7 @@ pub fn show_state(monitor: Monitor) -> Result<(), Error> {
 
     let results = client.query("select * from pgautofailover.node", &[])?;
 
-    let mut nodes: Vec<Node> = vec![];
+    // let mut nodes: Vec<Node> = vec![];
 
     for row in results.into_iter() {
         let node = Node {
