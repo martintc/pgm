@@ -1,15 +1,15 @@
 use anyhow::Error;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use config::Configuration;
 use config::write_config;
+use config::Configuration;
 
 use crate::models::monitor::Monitor;
 
 mod config;
 mod models;
-mod utility;
 mod postgres_client;
+mod utility;
 
 #[derive(Parser, Debug)]
 #[command(name = "pgm")]
@@ -56,7 +56,7 @@ enum Commands {
 
 fn handle_add_database(config: &mut Configuration, monitor: Monitor) -> Result<(), Error> {
     config.add_monitor(monitor);
-    write_config(&config)?;  
+    write_config(&config)?;
     Ok(())
 }
 
@@ -68,7 +68,10 @@ fn handle_list(config: Configuration) -> Result<(), Error> {
 }
 
 fn handle_show_state(config: Configuration, host: &str) -> Result<(), Error> {
-    let monitor = config.monitors.iter().find(|m| m.host == Some(host.to_string()));
+    let monitor = config
+        .monitors
+        .iter()
+        .find(|m| m.host == Some(host.to_string()));
 
     if let Some(monitor) = monitor {
         postgres_client::client::show_state(monitor.clone())?;
@@ -98,7 +101,7 @@ fn main() -> Result<(), Error> {
             user,
             password,
             database_name,
-        } =>  {
+        } => {
             let monitor = Monitor {
                 host,
                 port,
@@ -107,13 +110,13 @@ fn main() -> Result<(), Error> {
                 database_name,
             };
             handle_add_database(&mut config, monitor)?;
-        },
+        }
         Commands::List => handle_list(config)?,
         Commands::Show { host, state } => {
             if state == true {
                 handle_show_state(config, host.as_str())?;
             }
-        },
+        }
     }
 
     Ok(())

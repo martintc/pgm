@@ -1,5 +1,5 @@
+use anyhow::{Error, Result};
 use postgres::Client;
-use anyhow::{ Error, Result };
 
 use crate::{models::monitor::Monitor, utility};
 
@@ -40,8 +40,6 @@ pub fn show_state(monitor: Monitor) -> Result<(), Error> {
 
         println!("{}", node.nodename);
     }
-
-
 
     Ok(())
 }

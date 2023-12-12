@@ -5,11 +5,11 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::{io::Write, process::exit};
 
-use crate::models::monitor::{ Monitor };
+use crate::models::monitor::Monitor;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Configuration {
-    pub monitors: Vec<Monitor>
+    pub monitors: Vec<Monitor>,
 }
 
 impl Configuration {
@@ -30,9 +30,7 @@ pub fn get_path() -> std::path::PathBuf {
 }
 
 pub fn create_blank_config() -> anyhow::Result<(), anyhow::Error> {
-    let config = Configuration {
-        monitors: vec![],
-    };
+    let config = Configuration { monitors: vec![] };
 
     let mut file = std::fs::File::create(get_path())?;
 

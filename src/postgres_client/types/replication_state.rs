@@ -1,4 +1,4 @@
-use postgres_types::{ FromSql };
+use postgres_types::FromSql;
 
 #[derive(Debug, Default, FromSql)]
 #[postgres(name = "replication_state")]
@@ -68,5 +68,5 @@ pub enum ReplicationState {
     Primary,
 
     #[postgres(name = "secondary")]
-    Secondary
+    Secondary,
 }
