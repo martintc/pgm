@@ -63,6 +63,14 @@ enum Commands {
     ShowSecondaries {
         #[arg(long)]
         host: String
+    },
+
+    ListEvents {
+        #[arg(long)]
+        host: String,
+
+        #[arg(long)]
+        last: i64,
     }
 }
 
@@ -106,6 +114,19 @@ fn handle_show_primaries_or_secondaries(config: Configuration, host: &str, repli
         Err(Error::msg("Host not found"))
     }
 }
+fn handle_show_last_x_evenets(config: Configuration, host: &str, last_x: i64) -> Result<(), Error> {
+    let monitor = config
+    .monitors
+    .iter()
+    .find(|m| m.host == Some(host.to_string()));
+
+if let Some(monitor) = monitor {
+    postgres_client::client::show_last_x_events(monitor.clone(), last_x)?;
+    return Ok(());
+} else {
+    Err(Error::msg("Host not found"))
+}
+}
 
 fn main() -> Result<(), Error> {
     let mut config = get_config()?;
@@ -146,6 +167,9 @@ fn main() -> Result<(), Error> {
         },
         Commands::ShowSecondaries { host } => {
             handle_show_primaries_or_secondaries(config, host.as_str(), ReplicationState::Secondary)?;
+        },
+        Commands::ListEvents { host, last } => {
+            handle_show_last_x_evenets(config, host.as_str(), last)?;
         }
     }
 

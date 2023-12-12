@@ -4,19 +4,20 @@ use super::replication_state::ReplicationState;
 
 #[derive(Debug, FromSql)]
 pub struct Event {
-    eventid: i64, // bigint
-    eventtime: std::time::SystemTime, // timestamp w/timezone
-    formationid: String, // text
-    nodeid: i64, // bigint
-    groupip: i32, // integer
-    nodename: String, // text
-    nodehost: String, // text
-    nodeport: i32, // integer
-    reportedstate: ReplicationState, // replication_state
-    goalstate: ReplicationState, // replication_state
-    reportedtli: i32, // integer
-    reportedlsn: postgres_types::PgLsn, // pglsn
-    candidatepriority: i32, // integer
-    replicationquorum: bool, // boolean
-    description: String, // text
+    pub eventid: i64, // bigint
+    pub eventtime: std::time::SystemTime, // timestamp w/timezone
+    pub formationid: String, // text
+    pub nodeid: i64, // bigint
+    pub groupip: i32, // integer
+    pub nodename: String, // text
+    pub nodehost: String, // text
+    pub nodeport: i32, // integer
+    pub reportedstate: ReplicationState, // replication_state
+    pub goalstate: ReplicationState, // replication_state
+    pub reportedrepstate: String, // text
+    pub reportedtli: i32, // integer
+    pub reportedlsn: postgres_types::PgLsn, // pglsn
+    pub candidatepriority: i32, // integer
+    pub replicationquorum: bool, // boolean
+    pub description: String, // text
 }
