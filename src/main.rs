@@ -2,9 +2,9 @@ use anyhow::Error;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use postgres_client::types::replication_state::ReplicationState;
-use utility::config::Configuration;
-use utility::config::write_config;
 use utility::config::get_config;
+use utility::config::write_config;
+use utility::config::Configuration;
 
 use crate::models::monitor::Monitor;
 
@@ -51,18 +51,18 @@ enum Commands {
         host: String,
 
         #[arg(long)]
-        formation: Option<String>
+        formation: Option<String>,
     },
 
-    // Show all nodes across formations that are reported as primary 
+    // Show all nodes across formations that are reported as primary
     ShowPrimaries {
         #[arg(long)]
-        host: String
+        host: String,
     },
 
     ShowSecondaries {
         #[arg(long)]
-        host: String
+        host: String,
     },
 
     ListEvents {
@@ -71,7 +71,7 @@ enum Commands {
 
         #[arg(long)]
         last: i64,
-    }
+    },
 }
 
 fn handle_add_database(config: &mut Configuration, monitor: Monitor) -> Result<(), Error> {
@@ -87,7 +87,11 @@ fn handle_list(config: Configuration) -> Result<(), Error> {
     Ok(())
 }
 
-fn handle_show_state(config: Configuration, host: &str, formation: Option<String>) -> Result<(), Error> {
+fn handle_show_state(
+    config: Configuration,
+    host: &str,
+    formation: Option<String>,
+) -> Result<(), Error> {
     let monitor = config
         .monitors
         .iter()
@@ -101,7 +105,11 @@ fn handle_show_state(config: Configuration, host: &str, formation: Option<String
     }
 }
 
-fn handle_show_primaries_or_secondaries(config: Configuration, host: &str, replication_state: ReplicationState) -> Result<(), Error> {
+fn handle_show_primaries_or_secondaries(
+    config: Configuration,
+    host: &str,
+    replication_state: ReplicationState,
+) -> Result<(), Error> {
     let monitor = config
         .monitors
         .iter()
@@ -116,16 +124,16 @@ fn handle_show_primaries_or_secondaries(config: Configuration, host: &str, repli
 }
 fn handle_show_last_x_evenets(config: Configuration, host: &str, last_x: i64) -> Result<(), Error> {
     let monitor = config
-    .monitors
-    .iter()
-    .find(|m| m.host == Some(host.to_string()));
+        .monitors
+        .iter()
+        .find(|m| m.host == Some(host.to_string()));
 
-if let Some(monitor) = monitor {
-    postgres_client::client::show_last_x_events(monitor.clone(), last_x)?;
-    return Ok(());
-} else {
-    Err(Error::msg("Host not found"))
-}
+    if let Some(monitor) = monitor {
+        postgres_client::client::show_last_x_events(monitor.clone(), last_x)?;
+        return Ok(());
+    } else {
+        Err(Error::msg("Host not found"))
+    }
 }
 
 fn main() -> Result<(), Error> {
@@ -161,13 +169,17 @@ fn main() -> Result<(), Error> {
         Commands::List => handle_list(config)?,
         Commands::ShowState { host, formation } => {
             handle_show_state(config, host.as_str(), formation)?;
-        },
+        }
         Commands::ShowPrimaries { host } => {
             handle_show_primaries_or_secondaries(config, host.as_str(), ReplicationState::Primary)?;
-        },
+        }
         Commands::ShowSecondaries { host } => {
-            handle_show_primaries_or_secondaries(config, host.as_str(), ReplicationState::Secondary)?;
-        },
+            handle_show_primaries_or_secondaries(
+                config,
+                host.as_str(),
+                ReplicationState::Secondary,
+            )?;
+        }
         Commands::ListEvents { host, last } => {
             handle_show_last_x_evenets(config, host.as_str(), last)?;
         }

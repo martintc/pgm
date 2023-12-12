@@ -19,7 +19,10 @@ pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Err
     let mut results: Vec<postgres::Row> = vec![];
 
     if let Some(formation) = formation {
-        results = client.query("select * from pgautofailover.node where formationid = $1", &[&formation])?;
+        results = client.query(
+            "select * from pgautofailover.node where formationid = $1",
+            &[&formation],
+        )?;
     } else {
         results = client.query("select * from pgautofailover.node", &[])?;
     }
@@ -57,7 +60,10 @@ pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Err
     Ok(())
 }
 
-pub fn show_primaries_or_secondaries(monitor: Monitor, desired_state: ReplicationState) -> Result<(), Error> {
+pub fn show_primaries_or_secondaries(
+    monitor: Monitor,
+    desired_state: ReplicationState,
+) -> Result<(), Error> {
     let connection_string = utility::connection_string::create_connection_string(monitor);
     let mut client = Client::connect(connection_string.as_str(), postgres::NoTls)?;
 
@@ -93,8 +99,14 @@ pub fn show_primaries_or_secondaries(monitor: Monitor, desired_state: Replicatio
         nodes.push(node);
     }
 
-    for primary in nodes.iter().filter(|node| node.reportedstate == desired_state) {
-        println!("{} ({}): {}", primary.nodename, primary.formationid, primary.nodehost);
+    for primary in nodes
+        .iter()
+        .filter(|node| node.reportedstate == desired_state)
+    {
+        println!(
+            "{} ({}): {}",
+            primary.nodename, primary.formationid, primary.nodehost
+        );
     }
 
     Ok(())
@@ -104,7 +116,10 @@ pub fn show_last_x_events(monitor: Monitor, last_x_events: i64) -> Result<(), Er
     let connection_string = utility::connection_string::create_connection_string(monitor);
     let mut client = Client::connect(connection_string.as_str(), postgres::NoTls)?;
 
-    let statement = client.prepare_typed("select * from pgautofailover.event order by eventtime desc limit $1", &[Type::INT8])?;
+    let statement = client.prepare_typed(
+        "select * from pgautofailover.event order by eventtime desc limit $1",
+        &[Type::INT8],
+    )?;
 
     let results = client.query(&statement, &[&last_x_events])?;
 
@@ -134,8 +149,14 @@ pub fn show_last_x_events(monitor: Monitor, last_x_events: i64) -> Result<(), Er
     }
 
     for event in events.iter() {
-        println!("{} [{}] - {} - {}", event.eventid, DateTime::<Local>::from(event.eventtime), event.nodehost, event.description);
-    } 
+        println!(
+            "{} [{}] - {} - {}",
+            event.eventid,
+            DateTime::<Local>::from(event.eventtime),
+            event.nodehost,
+            event.description
+        );
+    }
 
     Ok(())
 }
