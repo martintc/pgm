@@ -52,6 +52,11 @@ enum Commands {
         #[arg(long)]
         formation: Option<String>
     },
+
+    ShowPrimaries {
+        #[arg(long)]
+        host: String
+    }
 }
 
 fn handle_add_database(config: &mut Configuration, monitor: Monitor) -> Result<(), Error> {
@@ -75,6 +80,20 @@ fn handle_show_state(config: Configuration, host: &str, formation: Option<String
 
     if let Some(monitor) = monitor {
         postgres_client::client::show_state(monitor.clone(), formation)?;
+        return Ok(());
+    } else {
+        Err(Error::msg("Host not found"))
+    }
+}
+
+fn handle_show_primaries(config: Configuration, host: &str) -> Result<(), Error> {
+    let monitor = config
+        .monitors
+        .iter()
+        .find(|m| m.host == Some(host.to_string()));
+
+    if let Some(monitor) = monitor {
+        postgres_client::client::show_primaries(monitor.clone())?;
         return Ok(());
     } else {
         Err(Error::msg("Host not found"))
@@ -114,6 +133,9 @@ fn main() -> Result<(), Error> {
         Commands::List => handle_list(config)?,
         Commands::ShowState { host, formation } => {
             handle_show_state(config, host.as_str(), formation)?;
+        },
+        Commands::ShowPrimaries { host } => {
+            handle_show_primaries(config, host.as_str())?;
         }
     }
 
