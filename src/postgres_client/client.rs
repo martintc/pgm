@@ -16,13 +16,6 @@ pub fn show_state(monitor: Monitor) -> Result<(), Error> {
     let mut nodes: Vec<Node> = vec![];
 
     for row in results.into_iter() {
-        // let i: String = row.try_get(4)?;
-        // let j: i32 = row.try_get(5)?;
-        // let k: ReplicationState = row.try_get(7)?;
-        // let l: ReplicationState = row.try_get(8)?;
-        // println!("{} {} {:#?} {:#?}", i, j, k, l);
-        // let mut node = Node { ..Default::default() };
-        // let values = Node::from_sql(row, )?;
         let node = Node {
             formationid: row.get(0),
             nodeid: row.get(1),
@@ -47,7 +40,7 @@ pub fn show_state(monitor: Monitor) -> Result<(), Error> {
             nodecluster: row.get(20),
         };
 
-        println!("{}", node.nodename.unwrap());
+        println!("{}", node.nodename);
     }
 
 
