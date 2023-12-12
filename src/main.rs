@@ -51,6 +51,9 @@ enum Commands {
 
         #[arg(long)]
         state: bool,
+
+        #[arg(long)]
+        formation: Option<String>
     },
 }
 
@@ -67,14 +70,14 @@ fn handle_list(config: Configuration) -> Result<(), Error> {
     Ok(())
 }
 
-fn handle_show_state(config: Configuration, host: &str) -> Result<(), Error> {
+fn handle_show_state(config: Configuration, host: &str, formation: Option<String>) -> Result<(), Error> {
     let monitor = config
         .monitors
         .iter()
         .find(|m| m.host == Some(host.to_string()));
 
     if let Some(monitor) = monitor {
-        postgres_client::client::show_state(monitor.clone())?;
+        postgres_client::client::show_state(monitor.clone(), formation)?;
         return Ok(());
     } else {
         Err(Error::msg("Host not found"))
@@ -112,9 +115,9 @@ fn main() -> Result<(), Error> {
             handle_add_database(&mut config, monitor)?;
         }
         Commands::List => handle_list(config)?,
-        Commands::Show { host, state } => {
+        Commands::Show { host, state, formation } => {
             if state == true {
-                handle_show_state(config, host.as_str())?;
+                handle_show_state(config, host.as_str(), formation)?;
             }
         }
     }

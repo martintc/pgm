@@ -5,11 +5,17 @@ use crate::{models::monitor::Monitor, utility};
 
 use crate::postgres_client::types::node::Node;
 
-pub fn show_state(monitor: Monitor) -> Result<(), Error> {
+pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Error> {
     let connection_string = utility::connection_string::create_connection_string(monitor);
     let mut client = Client::connect(connection_string.as_str(), postgres::NoTls)?;
 
-    let results = client.query("select * from pgautofailover.node", &[])?;
+    let mut results: Vec<postgres::Row> = vec![];
+
+    if let Some(formation) = formation {
+        results = client.query("select * from pgautofailover.node where formationid = $1", &[&formation])?;
+    } else {
+        results = client.query("select * from pgautofailover.node", &[])?;
+    }
 
     // let mut nodes: Vec<Node> = vec![];
 
