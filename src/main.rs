@@ -45,12 +45,9 @@ enum Commands {
     List,
 
     // Commands on monitor
-    Show {
+    ShowState {
         #[arg(long)]
         host: String,
-
-        #[arg(long)]
-        state: bool,
 
         #[arg(long)]
         formation: Option<String>
@@ -115,10 +112,8 @@ fn main() -> Result<(), Error> {
             handle_add_database(&mut config, monitor)?;
         }
         Commands::List => handle_list(config)?,
-        Commands::Show { host, state, formation } => {
-            if state == true {
-                handle_show_state(config, host.as_str(), formation)?;
-            }
+        Commands::ShowState { host, formation } => {
+            handle_show_state(config, host.as_str(), formation)?;
         }
     }
 
