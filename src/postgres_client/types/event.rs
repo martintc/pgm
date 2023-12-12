@@ -10,7 +10,7 @@ pub struct Event {
     nodeid: i64, // bigint
     groupip: i32, // integer
     nodename: String, // text
-    nodehost: Strong, // text
+    nodehost: String, // text
     nodeport: i32, // integer
     reportedstate: ReplicationState, // replication_state
     goalstate: ReplicationState, // replication_state

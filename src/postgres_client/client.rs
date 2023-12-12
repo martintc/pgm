@@ -89,7 +89,7 @@ pub fn show_primaries_or_secondaries(monitor: Monitor, desired_state: Replicatio
     }
 
     for primary in nodes.iter().filter(|node| node.reportedstate == desired_state) {
-        println!("{}: {}", primary.nodename, primary.nodehost);
+        println!("{} ({}): {}", primary.nodename, primary.formationid, primary.nodehost);
     }
 
     Ok(())

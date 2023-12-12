@@ -1,13 +1,13 @@
 use anyhow::Error;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use config::write_config;
-use config::Configuration;
 use postgres_client::types::replication_state::ReplicationState;
+use utility::config::Configuration;
+use utility::config::write_config;
+use utility::config::get_config;
 
 use crate::models::monitor::Monitor;
 
-mod config;
 mod models;
 mod postgres_client;
 mod utility;
@@ -108,7 +108,7 @@ fn handle_show_primaries_or_secondaries(config: Configuration, host: &str, repli
 }
 
 fn main() -> Result<(), Error> {
-    let mut config = config::get_config()?;
+    let mut config = get_config()?;
     let args = CLI::parse();
 
     let command = match args.command {
