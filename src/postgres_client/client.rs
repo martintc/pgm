@@ -1,5 +1,3 @@
-use std::time::SystemTime;
-
 use anyhow::{Error, Result};
 use chrono::{DateTime, Local};
 use cli_table::{print_stdout, WithTitle};
