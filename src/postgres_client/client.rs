@@ -2,6 +2,7 @@ use std::time::SystemTime;
 
 use anyhow::{Error, Result};
 use chrono::{DateTime, Local};
+use cli_table::{print_stdout, WithTitle};
 use postgres::Client;
 use postgres_types::Type;
 
@@ -27,7 +28,7 @@ pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Err
         results = client.query("select * from pgautofailover.node", &[])?;
     }
 
-    // let mut nodes: Vec<Node> = vec![];
+    let mut nodes: Vec<Node> = vec![];
 
     for row in results.into_iter() {
         let node = Node {
@@ -54,8 +55,10 @@ pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Err
             nodecluster: row.get(20),
         };
 
-        println!("{}", node.nodename);
+        nodes.push(node);
     }
+
+    print_stdout(nodes.iter().with_title())?;
 
     Ok(())
 }

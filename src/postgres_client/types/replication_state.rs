@@ -1,3 +1,5 @@
+use core::fmt;
+
 use postgres_types::FromSql;
 
 #[derive(Debug, Default, FromSql, PartialEq)]
@@ -69,4 +71,33 @@ pub enum ReplicationState {
 
     #[postgres(name = "secondary")]
     Secondary,
+}
+
+impl fmt::Display for ReplicationState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            ReplicationState::Unknown => write!(f, "unknown"),
+            ReplicationState::Init => write!(f, "init"),
+            ReplicationState::Single => write!(f, "single"),
+            ReplicationState::WaitPrimary => write!(f, "wait_primary"),
+            ReplicationState::Draining => write!(f, "draining"),
+            ReplicationState::DemoteTimeout => write!(f, "demote_timeout"),
+            ReplicationState::Demoted => write!(f, "demoted"),
+            ReplicationState::CatchingUp => write!(f, "catching_up"),
+            ReplicationState::PreparePromotion => write!(f, "prepare_promotion"),
+            ReplicationState::StopReplication => write!(f, "stop_replication"),
+            ReplicationState::WaitStandby => write!(f, "wait_stand_by"),
+            ReplicationState::Maintenance => write!(f, "maintenance"),
+            ReplicationState::JoinPrimary => write!(f, "join_primary"),
+            ReplicationState::ApplySettings => write!(f, "apply_settings"),
+            ReplicationState::PrepareMaintenace => write!(f, "prepare_maintenance"),
+            ReplicationState::WaitMaintenance => write!(f, "wait_maintenance"),
+            ReplicationState::ReportLsn => write!(f, "report_lsn"),
+            ReplicationState::FastForward => write!(f, "fast_forward"),
+            ReplicationState::JoinSecondary => write!(f, "join_secondary"),
+            ReplicationState::Dropped => write!(f, "dropped"),
+            ReplicationState::Primary => write!(f, "primary"),
+            ReplicationState::Secondary => write!(f, "secondary"),
+        }
+    }
 }
