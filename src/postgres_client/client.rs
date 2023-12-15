@@ -1,5 +1,4 @@
 use anyhow::{Error, Result};
-use chrono::{DateTime, Local};
 use cli_table::{print_stdout, WithTitle};
 use postgres::Client;
 use postgres_types::Type;
@@ -97,18 +96,12 @@ pub fn show_primaries_or_secondaries(
             nodecluster: row.get(20),
         };
 
-        nodes.push(node);
+        if node.reportedstate == desired_state {
+            nodes.push(node);
+        }
     }
 
-    for primary in nodes
-        .iter()
-        .filter(|node| node.reportedstate == desired_state)
-    {
-        println!(
-            "{} ({}): {}",
-            primary.nodename, primary.formationid, primary.nodehost
-        );
-    }
+    print_stdout(nodes.iter().with_title())?;
 
     Ok(())
 }
@@ -149,15 +142,7 @@ pub fn show_last_x_events(monitor: Monitor, last_x_events: i64) -> Result<(), Er
         events.push(event);
     }
 
-    for event in events.iter() {
-        println!(
-            "{} [{}] - {} - {}",
-            event.eventid,
-            DateTime::<Local>::from(event.eventtime),
-            event.nodehost,
-            event.description
-        );
-    }
+    print_stdout(events.iter().with_title())?;
 
     Ok(())
 }

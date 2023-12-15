@@ -1,23 +1,41 @@
+use chrono::{DateTime, Utc};
+use cli_table::Table;
 use postgres_types::FromSql;
 
 use super::replication_state::ReplicationState;
 
-#[derive(Debug, FromSql)]
+#[derive(Debug, FromSql, Table)]
 pub struct Event {
-    pub eventid: i64,                       // bigint
-    pub eventtime: std::time::SystemTime,   // timestamp w/timezone
-    pub formationid: String,                // text
-    pub nodeid: i64,                        // bigint
-    pub groupip: i32,                       // integer
-    pub nodename: String,                   // text
-    pub nodehost: String,                   // text
-    pub nodeport: i32,                      // integer
-    pub reportedstate: ReplicationState,    // replication_state
-    pub goalstate: ReplicationState,        // replication_state
-    pub reportedrepstate: String,           // text
-    pub reportedtli: i32,                   // integer
+    #[table(name = "event_id")]
+    pub eventid: i64, // bigint
+    #[table(name = "event_time")]
+    pub eventtime: DateTime<Utc>,
+    #[table(skip)]
+    pub formationid: String, // text
+    #[table(skip)]
+    pub nodeid: i64, // bigint
+    #[table(skip)]
+    pub groupip: i32, // integer
+    #[table(skip)]
+    pub nodename: String, // text
+    #[table(name = "node_host")]
+    pub nodehost: String, // text
+    #[table(skip)]
+    pub nodeport: i32, // integer
+    #[table(skip)]
+    pub reportedstate: ReplicationState, // replication_state
+    #[table(skip)]
+    pub goalstate: ReplicationState, // replication_state
+    #[table(skip)]
+    pub reportedrepstate: String, // text
+    #[table(skip)]
+    pub reportedtli: i32, // integer
+    #[table(skip)]
     pub reportedlsn: postgres_types::PgLsn, // pglsn
-    pub candidatepriority: i32,             // integer
-    pub replicationquorum: bool,            // boolean
-    pub description: String,                // text
+    #[table(skip)]
+    pub candidatepriority: i32, // integer
+    #[table(skip)]
+    pub replicationquorum: bool, // boolean
+    #[table(name = "description")]
+    pub description: String, // text
 }
