@@ -28,31 +28,7 @@ pub fn show_state(monitor: Monitor, formation: Option<String>) -> Result<(), Err
     let mut nodes: Vec<Node> = vec![];
 
     for row in results.into_iter() {
-        let node = Node {
-            formationid: row.get(0),
-            nodeid: row.get(1),
-            groupid: row.get(2),
-            nodename: row.get(3),
-            nodehost: row.get(4),
-            nodeport: row.get(5),
-            systemidentifier: row.get(6),
-            goalstate: row.get(7),
-            reportedstate: row.get(8),
-            reportedpgisrunning: row.get(9),
-            reportedrepstate: row.get(10),
-            reporttime: row.get(11),
-            reportedtli: row.get(12),
-            reportedlsn: row.get(13),
-            walreporttime: row.get(14),
-            health: row.get(15),
-            healthchecktime: row.get(16),
-            statechangetime: row.get(17),
-            candidatepriority: row.get(18),
-            replicationquorum: row.get(19),
-            nodecluster: row.get(20),
-        };
-
-        nodes.push(node);
+        nodes.push(Node::from_row(&row));
     }
 
     print_stdout(nodes.iter().with_title())?;
@@ -72,29 +48,7 @@ pub fn show_primaries_or_secondaries(
     let mut nodes: Vec<Node> = vec![];
 
     for row in results.into_iter() {
-        let node = Node {
-            formationid: row.get(0),
-            nodeid: row.get(1),
-            groupid: row.get(2),
-            nodename: row.get(3),
-            nodehost: row.get(4),
-            nodeport: row.get(5),
-            systemidentifier: row.get(6),
-            goalstate: row.get(7),
-            reportedstate: row.get(8),
-            reportedpgisrunning: row.get(9),
-            reportedrepstate: row.get(10),
-            reporttime: row.get(11),
-            reportedtli: row.get(12),
-            reportedlsn: row.get(13),
-            walreporttime: row.get(14),
-            health: row.get(15),
-            healthchecktime: row.get(16),
-            statechangetime: row.get(17),
-            candidatepriority: row.get(18),
-            replicationquorum: row.get(19),
-            nodecluster: row.get(20),
-        };
+        let node = Node::from_row(&row);
 
         if node.reportedstate == desired_state {
             nodes.push(node);
@@ -120,26 +74,7 @@ pub fn show_last_x_events(monitor: Monitor, last_x_events: i64) -> Result<(), Er
     let mut events: Vec<Event> = vec![];
 
     for row in results.into_iter() {
-        let event = Event {
-            eventid: row.get(0),
-            eventtime: row.get(1),
-            formationid: row.get(2),
-            nodeid: row.get(3),
-            groupip: row.get(4),
-            nodename: row.get(5),
-            nodehost: row.get(6),
-            nodeport: row.get(7),
-            reportedstate: row.get(8),
-            goalstate: row.get(9),
-            reportedrepstate: row.get(10),
-            reportedtli: row.get(11),
-            reportedlsn: row.get(12),
-            candidatepriority: row.get(13),
-            replicationquorum: row.get(14),
-            description: row.get(15),
-        };
-
-        events.push(event);
+        events.push(Event::from_row(&row));
     }
 
     print_stdout(events.iter().with_title())?;

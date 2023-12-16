@@ -39,3 +39,26 @@ pub struct Event {
     #[table(name = "description")]
     pub description: String, // text
 }
+
+impl Event {
+    pub fn from_row(row: &postgres::Row) -> Event {
+        Event {
+            eventid: row.get(0),
+            eventtime: row.get(1),
+            formationid: row.get(2),
+            nodeid: row.get(3),
+            groupip: row.get(4),
+            nodename: row.get(5),
+            nodehost: row.get(6),
+            nodeport: row.get(7),
+            reportedstate: row.get(8),
+            goalstate: row.get(9),
+            reportedrepstate: row.get(10),
+            reportedtli: row.get(11),
+            reportedlsn: row.get(12),
+            candidatepriority: row.get(13),
+            replicationquorum: row.get(14),
+            description: row.get(15),
+        }
+    }
+}
